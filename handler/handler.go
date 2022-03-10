@@ -39,6 +39,7 @@ func (h *handler) Handle(c *fiber.Ctx) error {
 		})
 	}
 	res := make(Res)
+	var mut sync.RWMutex
 	var wg sync.WaitGroup
 	for _, site := range req.Websites {
 		wg.Add(1)
@@ -50,7 +51,9 @@ func (h *handler) Handle(c *fiber.Ctx) error {
 					"error": err.Error(),
 				})
 			}
+			mut.Lock()
 			res[u] = string(body)
+			mut.Unlock()
 		}(site)
 	}
 	return c.Status(200).JSON(res)
