@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
@@ -17,13 +16,13 @@ func New() *redis.Client {
 	return redis.NewClient(&redis.Options{})
 }
 
-func WriteToRedis(key, value string) ([]byte, error) {
-	expire := time.Second * 20
-	_, err := rdb.SetEX(ctx, key, value, expire).Result()
+func WriteToRedis(key, value string) error {
+	// expire := time.Second * 20
+	_, err := rdb.Set(ctx, key, value, -1).Result()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return nil, nil
+	return nil
 }
 
 func ReadFromRedis(key string) ([]byte, error) {
